@@ -20,3 +20,8 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('movies','MovieController');
 Route::resource('reviews','ReviewController');
+Route::get('/','MovieController@index');
+Route::get('/averageRating/{movieID}','MovieController@averageRating')->name('averageRating');
+Route::get('/search','MovieController@search');
+
+Route::post('/upload','MovieController@upload');

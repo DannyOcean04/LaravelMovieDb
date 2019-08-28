@@ -43,6 +43,8 @@
                       <a class="nav-link" href="{{ url('movies/create') }}">Create </a>
                       </li>
                       @endif
+
+                      <li class="nav-item"><a class="nav-link" href="{{ url('reviews') }}">Review </a></li>
                       @endguest
                     </ul>
 

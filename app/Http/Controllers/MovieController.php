@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Movie;
+use App\Review;
+use App\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class MovieController extends Controller
 {
@@ -14,10 +19,61 @@ class MovieController extends Controller
   */
   public function index()
   {
-    $movies = Movie::all()->toArray();
-    return view('movies.index', compact('movies'));
+
+    $movies = DB::table('movies')->paginate(3);
+    $reviews = Review::all()->toArray();
+    $users = User::all()->toArray();
+    return view('movies.index',compact('movies','reviews','users'));
+  }
+
+  public function search(Request $request){
+
+    $reviews = Review::all()->toArray();
+    $users = User::all()->toArray();
+    $search = $request->get('search');
+    $movies = DB::table('movies')->where('title', 'like', '%'.$search.'%')->orwhere('director', 'like', '%'.$search.'%')->paginate(3);
+
+    if(count($movies)>0){
+      return view('movies.index',compact('movies','reviews','users'));
+    }
+    else
+    return view ('movies.index',compact('movies','reviews','users'))->withMessage('No Details found. Try to search again !');
+  }
+
+  public static function averageRating($movieID){
+
+    $reviews=Review::all()->toArray();
+    $x = 0;
+    $count =0;
+    foreach($reviews as $rev)
+    {
+
+      if($rev["movieid"]==$movieID)
+      {
+        $y = $rev['rating'];
+        $x = $x+$y;
+        $count++;
+      }
+
+    }
+
+    if($count == 0){
+      return $x;
+    }
+    else{
+      $avgR = $x/$count;
+
+      return $avgR;
+    }
+
 
   }
+
+
+
+
+
+
 
   /**
   * Show the form for creating a new resource.
@@ -86,7 +142,9 @@ class MovieController extends Controller
   public function show($id)
   {
     $movie = Movie::find($id);
-    return view('movies.show',compact('movie'));
+    $reviews = Review::all()->toArray();
+    $users = User::all()->toArray();
+    return view('movies.show',compact('movie','reviews','users'));
 
   }
 
@@ -121,7 +179,7 @@ class MovieController extends Controller
 
     $movie->title = $request->input('title');
     $movie->year = $request->input('year');
-  
+
     $movie->runtime = $request->input('runtime');
     $movie->genre = $request->input('genre');
     $movie->updated_at = now();
@@ -157,4 +215,56 @@ class MovieController extends Controller
     $movie->delete();
     return redirect('movies')->with('success','Movie has been deleted');
   }
+
+
+
+  public function upload(Request $request)
+    {
+      //get file
+      $upload=$request->file('upload-file');
+      $filePath=$upload->getRealPath();
+      //open and read
+      $file=fopen($filePath, 'r');
+      $header= fgetcsv($file);
+      // dd($header);
+      $escapedHeader=[];
+      /////////////////////////////////////////////////////////////////////////
+      //validate
+        foreach ($header as $key => $value) {
+          $lheader=strtolower($value);
+          $escapedItem=preg_replace('/[^a-z]/', '', $lheader);
+          array_push($escapedHeader, $escapedItem);
+      }
+      ///////////////////////////////////////////////////////////////////
+      //looping through other columns
+      while($columns=fgetcsv($file))
+      {
+        if($columns[0]=="")
+        {
+          continue;
+        }
+
+
+        $data= array_combine($escapedHeader, $columns);
+
+        // Table update
+        $director=$data['director'];
+        $title=$data['title'];
+        $year=$data['year'];
+        $runtime=$data['runtime'];
+        $genre=$data['genre'];
+
+        $movie= Movie::firstOrNew(['director'=>$director,'title'=>$title]);
+        $movie->year=$year;
+        $movie->runtime=$runtime;
+        $movie->genre=$genre;
+        $movie->save();
+
+      }
+
+
+              return back()->with('success', 'movies have been added');
+}
+
+
 }

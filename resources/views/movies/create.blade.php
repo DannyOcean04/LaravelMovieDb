@@ -66,12 +66,27 @@
               placeholder="Image file" />
             </div>
             <div class="col-md-6 col-md-offset-4">
-              <input type="submit" class="btn btn-primary" />
+              <input type="submit" class="btn btn-success" />
               <input type="reset" class="btn btn-primary" />
             </div>
           </form>
         </div>
       </div>
+
+      <div class="card">
+          <div class="card-header">Add movies via csv file</div>
+        <form action="{{url('/upload')}}" method="post" enctype="multipart/form-data">
+    {{csrf_field()}}
+        <div class="form-group">
+            <label for="upload-file"></label>
+            <input type="file" name="upload-file" class="form-control">
+        </div>
+        <input class="btn btn-success" type="submit" value="Upload Movies" name="submit">
+    </form>
+      </div>
+
+
+
       @endguest
     </div>
   </div>

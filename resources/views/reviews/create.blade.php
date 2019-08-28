@@ -14,7 +14,7 @@
      </div>
      @else
       <div class="card">
-        <div class="card-header">Create an new movie</div>
+        <div class="card-header">Create an new review</div>
         <!-- display the errors -->
         @if ($errors->any())
         <div class="alert alert-danger">
@@ -32,7 +32,9 @@
           <form class="form-horizontal" method="POST"
           action="{{url('reviews') }}" enctype="multipart/form-data">
           @csrf
-          <div class="col-md-8">
+
+
+          <div class="col-md-6 col-md-offset-4">
             <label>Rating</label>
             <select name="rating" >
               <option value="0">0</option>
@@ -44,15 +46,21 @@
             </select>
           </div>
 
-          <div class="col-md-8">
-          <label >Comments</label>
-          <textarea rows="4" cols="50" name="comments">Comments about the movie</textarea>
+          <div class="col-md-6 col-md-offset-2">
+            <label >Comments</label>
+            <textarea rows="3" cols="120" name="comments">Comments about the movie</textarea>
           </div>
 
-            <div class="col-md-6 col-md-offset-4">
-              <input type="submit" class="btn btn-primary" />
-              <input type="reset" class="btn btn-primary" />
-            </div>
+
+          <div class="col-md-6 col-md-offset-4">
+            <?php $movieID = $movie['id'];?>
+            <input type="hidden" name="mID" value={{$movieID}} />
+
+            <input type="submit" class="btn btn-success" />
+
+          </div>
+
+
           </form>
         </div>
       </div>

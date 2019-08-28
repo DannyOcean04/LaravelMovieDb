@@ -34,35 +34,35 @@
           @csrf
           <div class="col-md-8">
             <label >Director</label>
-            <input type="text" name="director"
+            <input type="text" name="director" value="{{$movie->director}}"
             placeholder="Director" />
           </div>
           <div class="col-md-8">
             <label >Title</label>
-            <input type="text" name="title"
+            <input type="text" name="title" value="{{$movie->title}}"
             placeholder="Title" />
           </div>
 
           <div class="col-md-8">
             <label >Genre</label>
-            <input type="text" name="genre"
+            <input type="text" name="genre" value="{{$movie->genre}}"
             placeholder="Genre" />
           </div>
           <div class="col-md-8">
             <label >Runtime</label>
-            <input type="text" name="runtime"
+            <input type="text" name="runtime" value="{{$movie->runtime}}"
             placeholder="Runtime" />
           </div>
 
           <div class="col-md-8">
             <label >Year</label>
-            <input type="text" name="year"
+            <input type="text" name="year" value="{{$movie->year}}"
             placeholder="Year" />
           </div>
 
           <div class="col-md-8">
             <label>Image</label>
-            <input type="file" name="image" />
+            <input type="file" name="image" value="{{$movie->image}}"/>
           </div>
           <div class="col-md-6 col-md-offset-4">
             <input type="submit" class="btn btn-primary" />

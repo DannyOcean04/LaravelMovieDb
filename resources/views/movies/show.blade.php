@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+<?php use App\Http\Controllers\MovieController;?>
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-8 ">
@@ -24,34 +25,77 @@
         <p>{{ \Session::get('success') }}</p>
       </div><br /> @endif
 
-      <div class="card">
-        <div class="card-header">Display Movie</div>
+      <div class="card text-center text-black border-dark bg-light mb-3">
+
+
         <div class="card-body">
-          <table class="table table-striped" border="1" >
-            <tr> <td> <b>Director </th> <td> {{$movie['director']}}</td></tr>
-              <tr> <th>Title</th> <td>{{$movie->title}}</td></tr>
-              <tr> <td>Runtime</th> <td>{{$movie->runtime}}</td></tr>
-              <tr> <td>Genre</th> <td>{{$movie->genre}}</td></tr>
-              <tr> <td>Year</th> <td>{{$movie->year}}</td></tr>
+          <h5 class="card-title">{{$movie['title']}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{$movie['director']}}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{$movie['runtime']}} mins</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{$movie['genre']}}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{$movie['year']}}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{ MovieController::averageRating($movie['id'])}}/5 </h6>
 
-              <tr> <td colspan='2' ><img style="width:100%;height:100%"
-                src="{{ asset('storage/images/'.$movie->image)}}"></td></tr>
-              </table>
-              <table><tr>
-                <td><a href="{{route('movies.index')}}" class="btn btn-primary" role="button">Back to the list</a></td>
-                @if (Auth::user()->role == 1)
-                  <td><a href="{{action('MovieController@edit', $movie['id'])}}" class="btn btn-warning">Edit</a></td>
-                    <td><form action="{{action('MovieController@destroy', $movie['id'])}}"
-                      method="post"> @csrf
-                      <input name="_method" type="hidden" value="DELETE">
-                      <button class="btn btn-danger" type="submit">Delete</button>
-                    </form></td>
-                    @endif
+          <div class="btn-group" role="group" aria-label="Basic example">
 
-                   <td><a href="{{action('ReviewController@create')}}" class="btn btn-success" role="button">Create Review</a></td>
-                  </tr></table>
+            <a href="{{route('movies.index')}}" class="btn btn-primary" role="button">Back to the list</a>
+            @if (Auth::user()->role == 1)
+            <a href="{{action('MovieController@edit', $movie['id'])}}" class="btn btn-warning">Edit</a>
+            <form action="{{action('MovieController@destroy', $movie['id'])}}"
+            method="post"> @csrf
+            <input name="_method" type="hidden" value="DELETE">
+            <button class="btn btn-danger" type="submit">Delete</button>
+          </form>
+          @endif
+
+          <a href="{{action('ReviewController@show', $movie['id'])}}" class="btn btn-success">Create Review</a>
+
+        </div>
+
                 </div>
               </div>
+
+              <div class="card">
+                <div class="card-header">Movie Review</div>
+                <div class="card-body">
+                  <table class="table table-striped" border="1" >
+
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Comments</th>
+                      </tr>
+                    </thead>
+
+
+                    <tbody>
+                      @foreach($reviews as $review)
+                      @if($review["movieid"]==$movie["id"])
+                      @foreach($users as $user)
+                      @if($review["userid"]==$user["id"])
+
+                      <tr>
+                        <!--  edit below -->
+
+                        <td>{{$user['name']}}</td>
+                        <td>{{$review['rating']}}</td>
+                        <td>{{$review['comments']}}</td>
+
+                        </tr>
+                        @endif
+                        @endforeach
+                        @endif
+                        @endforeach
+
+                      </tbody>
+
+                  </table>
+                </div>
+              </div>
+
+
+
               @endguest
             </div>
           </div>
